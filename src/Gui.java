@@ -1,13 +1,16 @@
 import javax.swing.*;
+import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.ArrayList;
 
 public class Gui implements ActionListener {
 
     JTextArea editor = new JTextArea();
     JLabel console = new JLabel("");
     JLabel lexical = new JLabel("");
+    DefaultTableModel tableModel = new DefaultTableModel();
 
     public void createGui() {
         JFrame frame = new JFrame("Lexer");
@@ -61,7 +64,9 @@ public class Gui implements ActionListener {
         scrollPane.setBorder(BorderFactory.createTitledBorder("Source Code"));
         frame.add(scrollPane);
 
-        JScrollPane scrollPane2 = new JScrollPane(lexical);
+        //String[] tableColumns = {"line","token","string or word"};
+        JTable table = new JTable(tableModel);
+        JScrollPane scrollPane2 = new JScrollPane(table);
         scrollPane2.setBounds(440,0,440,400);
         scrollPane2.setBackground(new Color(235, 235, 235));
         scrollPane2.getViewport().setBackground(new Color(255, 255, 255));
@@ -84,9 +89,26 @@ public class Gui implements ActionListener {
         String buttonName = e.getActionCommand();
 
         if (buttonName.equals("Run")) {
+            tableModel.getDataVector().removeAllElements();
+            tableModel.setColumnCount(0);
+
+            tableModel.addColumn("line");
+            tableModel.addColumn("token");
+            tableModel.addColumn("string or word");
             console.setText("Program complete");
             Token token = new Token();
-            token.getToken(inputText);
+            ArrayList<TokenDetails> tokenDetailsList = token.getToken(inputText);
+
+            for ( int i = tokenDetailsList.size()-1; i >= 0; i--) {
+                tableModel.insertRow(0, new Object[] { tokenDetailsList.get(i).getLineNumber(), tokenDetailsList.get(i).getTokenType(), tokenDetailsList.get(i).getWord() });
+            }
+//            for ( TokenDetails tokenDetails : tokenDetailsList) {
+//                tableModel.insertRow(0, new Object[] { tokenDetails.getLineNumber(), tokenDetails.getTokenType(), tokenDetails.getWord() });
+//            }
+
+            //tableModel.insertRow(0, new Object[] { "1", "Keyword", "Float" });
+            //tableModel.insertRow(0, tokenDetailsList);
+
             //lexical.setText(textContent);
         }
         else if (buttonName.equals("Exit")) {

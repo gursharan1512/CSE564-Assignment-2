@@ -24,9 +24,6 @@ public class Lexer {
             //System.out.println(tokenDetails);
             tokenDetailsList.add(tokenDetails);
         }
-        for ( TokenDetails abc : tokenDetailsList) {
-            System.out.println(abc);
-        }
         return tokenDetailsList;
     }
 
