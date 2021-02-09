@@ -17,7 +17,7 @@ public class Lexer {
     public static final String HEX_DECIMAL_NUMBER = "HEX_DECIMAL_NUMBER";
     public static final String BINARY_NUMBER = "BINARY_NUMBER";
 
-    public ArrayList<TokenDetails> identifyToken(String[] tokens, int lineNumber) {
+    public ArrayList<TokenDetails> identifyToken(ArrayList<String> tokens, int lineNumber) {
         ArrayList<TokenDetails> tokenDetailsList = new ArrayList<>();
 
         for (String token : tokens) {
