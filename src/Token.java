@@ -37,6 +37,9 @@
 import java.util.ArrayList;
 
 public class Token {
+
+    boolean isString = false;
+
     public ArrayList<TokenDetails> getToken(String inputText) {
         String[] lines = inputText.split("\\n");
         //ArrayList<String> tokenList = setToken(inputText);
@@ -53,19 +56,33 @@ public class Token {
     public ArrayList<String> setToken(String inputText) {
         ArrayList<String> tokenList = new ArrayList<>();
         int charPosition = 0;
-        boolean isString = false;
+//        boolean append = false;
+//        if (isString) {
+//            append = true;
+//        }
         char[] inputChar = inputText.toCharArray();
         for (int i = 0; i < inputChar.length; i++) {
             if (inputChar[i] == '"') {
+                if (!isString) {
+                    tokenList.add(inputText.substring(charPosition,i));
+                    charPosition = i;
+                }
                 isString = !isString;
             }
             if (!isString) {
-                if (inputChar[i] == '=') {
+                if (inputChar[i] == '=' || inputChar[i] == '(' || inputChar[i] == ')' || inputChar[i] == '{' || inputChar[i] == '}' || inputChar[i] == ';' ||
+                        inputChar[i] == '+' || inputChar[i] == '-' || inputChar[i] == '/' || inputChar[i] == '*' || inputChar[i] == '%') {
                     //System.out.println("sh-"+inputChar[i]+"-sh");
-                    System.out.println("shartan");
-                    System.out.println("sh-"+inputText.substring(charPosition,i)+"-sh");
-                    System.out.println("sh-"+inputText.substring(i,i+1)+"-sh");
-                    //tokenList.add(inputText.substring(charPosition,i));
+                    //System.out.println("sh-"+inputText.substring(charPosition,i)+"-sh");
+                    //System.out.println("sh-"+inputText.substring(i,i+1)+"-sh");
+                    if (!inputText.substring(charPosition,i).equals("") && !inputText.substring(charPosition,i).equals(" ")) {
+                        tokenList.add(inputText.substring(charPosition,i));
+                    }
+//                    if (!inputText.substring(i,i+1).equals("\n") && !inputText.substring(i,i+1).equals(" ")) {
+//                        tokenList.add(inputText.substring(i,i+1));
+//                        System.out.println("shartan");
+//                        System.out.println("sh-"+inputText.substring(i,i+1)+"-sh");
+//                    }
                     tokenList.add(inputText.substring(i,i+1));
                     charPosition = i+1;
                 }
@@ -79,7 +96,16 @@ public class Token {
                 }
             }
         }
-        tokenList.add(inputText.substring(charPosition));
+        if (!inputText.substring(charPosition).equals("") && !inputText.substring(charPosition).equals(" ")) {
+//            if (append) {
+//                System.out.printf("sharan");
+//                tokenList.set(tokenList.size() - 1, tokenList.get(tokenList.size() - 1)+inputText.substring(charPosition));
+//            }
+//            else {
+//                tokenList.add(inputText.substring(charPosition));
+//            }
+            tokenList.add(inputText.substring(charPosition));
+        }
         return tokenList;
     }
 }
