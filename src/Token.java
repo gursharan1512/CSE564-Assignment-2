@@ -64,7 +64,8 @@ public class Token {
         for (int i = 0; i < inputChar.length; i++) {
             if (inputChar[i] == '"') {
                 if (!isString) {
-                    tokenList.add(inputText.substring(charPosition,i));
+                    if (!inputText.substring(charPosition,i).equals(""))
+                        tokenList.add(inputText.substring(charPosition,i));
                     charPosition = i;
                 }
                 isString = !isString;
@@ -78,12 +79,12 @@ public class Token {
                     if (!inputText.substring(charPosition,i).equals("") && !inputText.substring(charPosition,i).equals(" ")) {
                         tokenList.add(inputText.substring(charPosition,i));
                     }
-//                    if (!inputText.substring(i,i+1).equals("\n") && !inputText.substring(i,i+1).equals(" ")) {
-//                        tokenList.add(inputText.substring(i,i+1));
-//                        System.out.println("shartan");
-//                        System.out.println("sh-"+inputText.substring(i,i+1)+"-sh");
-//                    }
-                    tokenList.add(inputText.substring(i,i+1));
+                    if (!inputText.substring(i,i+1).equals("\n") && !inputText.substring(i,i+1).equals(" ")) {
+                        tokenList.add(inputText.substring(i,i+1));
+                        //System.out.println("shartan");
+                        //System.out.println("sh-"+inputText.substring(i,i+1)+"-sh");
+                    }
+                    //tokenList.add(inputText.substring(i,i+1));
                     charPosition = i+1;
                 }
                 else if (inputChar[i] == ' ') {
