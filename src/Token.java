@@ -39,6 +39,8 @@ import java.util.ArrayList;
 public class Token {
 
     boolean isString = false;
+    boolean addPrev = false;
+    ArrayList<String> test = new ArrayList<>();
 
     public ArrayList<TokenDetails> getToken(String inputText) {
         String[] lines = inputText.split("\\n");
@@ -46,9 +48,20 @@ public class Token {
         Lexer lexer = new Lexer();
         int lineNumber = 1;
         ArrayList<TokenDetails> tokenDetailsList = new ArrayList<>();
-        for (String line : lines) {
-            tokenDetailsList.addAll(lexer.identifyToken(setToken(line), lineNumber));
-            lineNumber++;
+        //for (String line : lines) {
+        for (int i = 0; i < lines.length; i++) {
+            if (!isString && lineNumber != 1) {
+                test.removeAll(test);
+            }
+            setToken(lines[i]);
+
+            if (!isString || (lines.length == (i+1))) {
+                tokenDetailsList.addAll(lexer.identifyToken(test, lineNumber));
+                lineNumber++;
+            }
+            else {
+                addPrev = true;
+            }
         }
         return tokenDetailsList;
     }
@@ -64,23 +77,36 @@ public class Token {
         for (int i = 0; i < inputChar.length; i++) {
             if (inputChar[i] == '"') {
                 if (!isString) {
-                    if (!inputText.substring(charPosition,i).equals(""))
-                        tokenList.add(inputText.substring(charPosition,i));
+                    if (!inputText.substring(charPosition,i).equals("")) {
+                        test.add(inputText.substring(charPosition, i));
+                    }
+                    //System.out.println(inputText.substring(charPosition,i));
                     charPosition = i;
                 }
+//                if (addPrev) {
+//                    test.set(test.size() - 1, test.get(test.size() - 1)+" "+inputText.substring(charPosition,i+1));
+//                    addPrev = false;
+//                    charPosition = i+1;
+//                }
                 isString = !isString;
             }
+            if (inputChar[i] == '"' || inputChar.length == (i+1) || addPrev) {
+                test.set(test.size() - 1, test.get(test.size() - 1)+""+inputText.substring(charPosition,i+1));
+                addPrev = false;
+                charPosition = i+1;
+            }
             if (!isString) {
+                //System.out.println("sharan");
                 if (inputChar[i] == '=' || inputChar[i] == '(' || inputChar[i] == ')' || inputChar[i] == '{' || inputChar[i] == '}' || inputChar[i] == ';' ||
                         inputChar[i] == '+' || inputChar[i] == '-' || inputChar[i] == '/' || inputChar[i] == '*' || inputChar[i] == '%') {
                     //System.out.println("sh-"+inputChar[i]+"-sh");
                     //System.out.println("sh-"+inputText.substring(charPosition,i)+"-sh");
                     //System.out.println("sh-"+inputText.substring(i,i+1)+"-sh");
                     if (!inputText.substring(charPosition,i).equals("") && !inputText.substring(charPosition,i).equals(" ")) {
-                        tokenList.add(inputText.substring(charPosition,i));
+                        test.add(inputText.substring(charPosition,i));
                     }
                     if (!inputText.substring(i,i+1).equals("\n") && !inputText.substring(i,i+1).equals(" ")) {
-                        tokenList.add(inputText.substring(i,i+1));
+                        test.add(inputText.substring(i,i+1));
                         //System.out.println("shartan");
                         //System.out.println("sh-"+inputText.substring(i,i+1)+"-sh");
                     }
@@ -91,22 +117,15 @@ public class Token {
                     //System.out.println("sh-"+inputText.substring(charPosition,i)+"-sh");
                     if (!inputText.substring(charPosition,i).equals("") && !inputText.substring(charPosition,i).equals("\t")) {
                         //System.out.println("sh-"+inputChar[i]+"-sh");
-                        tokenList.add(inputText.substring(charPosition,i));
+                        test.add(inputText.substring(charPosition,i));
                     }
                     charPosition = i+1;
                 }
             }
         }
         if (!inputText.substring(charPosition).equals("") && !inputText.substring(charPosition).equals(" ")) {
-//            if (append) {
-//                System.out.printf("sharan");
-//                tokenList.set(tokenList.size() - 1, tokenList.get(tokenList.size() - 1)+inputText.substring(charPosition));
-//            }
-//            else {
-//                tokenList.add(inputText.substring(charPosition));
-//            }
-            tokenList.add(inputText.substring(charPosition));
+            test.add(inputText.substring(charPosition));
         }
-        return tokenList;
+        return test;
     }
 }
