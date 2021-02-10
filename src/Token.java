@@ -76,35 +76,19 @@ public class Token {
         char[] inputChar = inputText.toCharArray();
         for (int i = 0; i < inputChar.length; i++) {
             if (inputChar[i] == '"') {
-                if (!isString) {
-                    if (!inputText.substring(charPosition,i).equals("")) {
-                        test.add(inputText.substring(charPosition, i));
-                    }
-                    //System.out.println(inputText.substring(charPosition,i));
-                    charPosition = i;
-                }
-//                if (addPrev) {
-//                    test.set(test.size() - 1, test.get(test.size() - 1)+" "+inputText.substring(charPosition,i+1));
-//                    addPrev = false;
-//                    charPosition = i+1;
-//                }
-                isString = !isString;
-            }
-            if (inputChar[i] == '"' || inputChar.length == (i+1) || addPrev) {
-                test.set(test.size() - 1, test.get(test.size() - 1)+""+inputText.substring(charPosition,i+1));
-                addPrev = false;
-                charPosition = i+1;
+                charPosition = stringParser(inputText, inputChar,charPosition,i);
             }
             if (!isString) {
-                //System.out.println("sharan");
                 if (inputChar[i] == '=' || inputChar[i] == '(' || inputChar[i] == ')' || inputChar[i] == '{' || inputChar[i] == '}' || inputChar[i] == ';' ||
                         inputChar[i] == '+' || inputChar[i] == '-' || inputChar[i] == '/' || inputChar[i] == '*' || inputChar[i] == '%') {
                     //System.out.println("sh-"+inputChar[i]+"-sh");
-                    //System.out.println("sh-"+inputText.substring(charPosition,i)+"-sh");
+                    System.out.println("charPosition - "+charPosition+" i - "+i+" inputText length - "+inputText.length());
+                    System.out.println("sh-"+inputText.substring(charPosition,i)+"-sh");
                     //System.out.println("sh-"+inputText.substring(i,i+1)+"-sh");
                     if (!inputText.substring(charPosition,i).equals("") && !inputText.substring(charPosition,i).equals(" ")) {
                         test.add(inputText.substring(charPosition,i));
                     }
+                    System.out.println("charPosition - "+charPosition+" i - "+i+" inputText length - "+inputText.length());
                     if (!inputText.substring(i,i+1).equals("\n") && !inputText.substring(i,i+1).equals(" ")) {
                         test.add(inputText.substring(i,i+1));
                         //System.out.println("shartan");
@@ -127,5 +111,21 @@ public class Token {
             test.add(inputText.substring(charPosition));
         }
         return test;
+    }
+
+    private int stringParser(String inputText, char[] inputChar, int charPosition, int i) {
+        if (!isString) {
+            if (!inputText.substring(charPosition,i).equals("")) {
+                test.add(inputText.substring(charPosition, i));
+            }
+            charPosition = i;
+        }
+        isString = !isString;
+        if (inputChar.length == (i+1) || addPrev) {
+            test.set(test.size() - 1, test.get(test.size() - 1)+""+inputText.substring(charPosition,i+1));
+            addPrev = false;
+            charPosition = i+1;
+        }
+        return charPosition;
     }
 }
