@@ -94,6 +94,9 @@ public class Gui implements ActionListener {
         String buttonName = e.getActionCommand();
 
         if (buttonName.equals("Run")) {
+            int numberOfWords = 0;
+            int numberOfLines = 0;
+            int errorCounter = 0;
             tableModel.getDataVector().removeAllElements();
             tableModel.setColumnCount(0);
 
@@ -103,10 +106,25 @@ public class Gui implements ActionListener {
             console.setText("Program complete");
             Tokenizer tokenizer = new Tokenizer();
             ArrayList<TokenDetails> tokenDetailsList = tokenizer.getToken(inputText);
-
-            for (int i = tokenDetailsList.size() - 1; i >= 0; i--) {
+            int i;
+            for (i = tokenDetailsList.size() - 1; i >= 0; i--) {
                 tableModel.insertRow(0, new Object[]{tokenDetailsList.get(i).getLineNumber(), tokenDetailsList.get(i).getTokenType(), tokenDetailsList.get(i).getWord()});
+                if(tokenDetailsList.get(i).getTokenType().equals("ERROR")){
+                    errorCounter++;
+                }
             }
+            numberOfWords = tokenDetailsList.size();
+            numberOfLines = tokenDetailsList.get(numberOfWords-1).getLineNumber();
+
+            if(errorCounter != 0 ){
+                console.setText("Total Number of String parsed: "+ String.valueOf(numberOfWords)+ "       In " + numberOfLines + "lines.     But " + errorCounter + "  strings does not match any rule." );
+            } else {
+                console.setText("Program Compiled Successfully!!!         Total Number of String parsed: "+ String.valueOf(numberOfWords)+ "       In " + numberOfLines + "  lines.");
+
+            }
+
+
+
         } else if (buttonName.equals("Exit")) {
             System.exit(0);
         }

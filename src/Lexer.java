@@ -46,10 +46,10 @@ public class Lexer {
                 tokenDetails.setTokenType(OPERATOR);
             } else if (isKeyword(token)) {
                 tokenDetails.setTokenType(KEYWORD);
-            } else if (isHexNumber(token)) {
-                tokenDetails.setTokenType(HEX_DECIMAL_NUMBER);
-            } else if (isBinaryNumber(token)) {
-                tokenDetails.setTokenType(BINARY_NUMBER);
+            } else if (token.startsWith("0x") || token.startsWith("0X")) {
+                isHexNumber(token, tokenDetails);
+            } else if (token.startsWith("0B") || token.startsWith("0b")) {
+                isBinaryNumber(token, tokenDetails);
             } else if (isDecimalNumber(token)) {
                 tokenDetails.setTokenType(DECIMAL_NUMBER);
             } else if (token.startsWith("\"") && token.endsWith("\"")) {
@@ -84,21 +84,28 @@ public class Lexer {
     /**
      * Identify whether given string token is Hexadecimal number.
      * @param token - String token
+     * @param tokenDetails
      * @return - boolean result, True if token is Hexadecimal number.
      */
-    private boolean isHexNumber(String token) {
-        if (token.startsWith("0X") || token.startsWith("0x"))
-            return verifyTokenWithNumberSystem(token.substring(2), 16);
-        return false;
+    private void isHexNumber(String token, TokenDetails tokenDetails) {
+        if (verifyTokenWithNumberSystem(token.substring(2), 16)){
+            tokenDetails.setTokenType(HEX_DECIMAL_NUMBER);
+        } else {
+            tokenDetails.setTokenType(ERROR);
+        }
     }
     /**
      * Identify whether given string token is Binary number.
      * @param token - String token
+     * @param tokenDetails
      * @return - boolean result, True if token is Binary number.
      */
-    private boolean isBinaryNumber(String token) {
-        if (token.startsWith("0B") || token.startsWith("0b") ) return verifyTokenWithNumberSystem(token.substring(2), 2);
-        return false;
+    private void isBinaryNumber(String token, TokenDetails tokenDetails) {
+        if (verifyTokenWithNumberSystem(token.substring(2), 2)) {
+            tokenDetails.setTokenType(BINARY_NUMBER);
+        } else {
+            tokenDetails.setTokenType(ERROR);
+        }
     }
 
     /**

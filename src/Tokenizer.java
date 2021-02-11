@@ -13,7 +13,7 @@ public class Tokenizer {
     private ArrayList<String> lineTokens = new ArrayList<>();
     private boolean isString = false;
     private boolean addString = false;
-    static final List<Character> OPERATOR_DELIMITER_LIST = Arrays.asList('=','(',')','{','}',';','+','-','*','/','%', '>', '<');
+    static final List<Character> OPERATOR_DELIMITER_LIST = Arrays.asList('=','(',')','{','}',';','+','-','*','/','%', '>', '<', '[', ']');
     boolean isDoubleOperator = false;
 
     /**
