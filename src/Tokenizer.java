@@ -2,14 +2,25 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-public class Token {
+/**
+ * Class implements methods to create tokens from the given block of code.
+ * @author Gursharanjit Singh Ghotra
+ * @author Manthan Agrawal
+ */
+
+public class Tokenizer {
 
     private ArrayList<String> lineTokens = new ArrayList<>();
     private boolean isString = false;
     private boolean addString = false;
-    static final List<Character> OPERATOR_DELIMITER_LIST = Arrays.asList('=','(',')','{','}',';','+','-','*','/','%');
+    static final List<Character> OPERATOR_DELIMITER_LIST = Arrays.asList('=','(',')','{','}',';','+','-','*','/','%', '>', '<');
     boolean isDoubleOperator = false;
 
+    /**
+     * Takes given block of code to convert them into tokens.
+     * @param inputText - Given block of code.
+     * @return List of String tokens.
+     */
     public ArrayList<TokenDetails> getToken(String inputText) {
         String[] lines = inputText.split("\\n");
         Lexer lexer = new Lexer();
@@ -17,9 +28,9 @@ public class Token {
         ArrayList<TokenDetails> tokenDetailsList = new ArrayList<>();
         for (int i = 0; i < lines.length; i++) {
             if (!isString && lineNumber != 1) {
-                lineTokens.removeAll(lineTokens);
+                lineTokens.clear();
             }
-            setToken(lines[i]);
+            createTokensFromSingleString(lines[i]);
             if (!isString || (lines.length == (i+1))) {
                 tokenDetailsList.addAll(lexer.identifyToken(lineTokens, lineNumber));
                 lineNumber++;
@@ -31,7 +42,11 @@ public class Token {
         return tokenDetailsList;
     }
 
-    private void setToken(String inputText) {
+    /**
+     *Takes input single string and separates tokens from it.
+     * @param inputText - Line of code.
+     */
+    private void createTokensFromSingleString(String inputText) {
         int charPosition = 0;
         char[] inputChar = inputText.toCharArray();
         for (int i = 0; i < inputChar.length; i++) {
@@ -44,7 +59,7 @@ public class Token {
                 charPosition = i+1;
             }
             if (!isString) {
-                charPosition = identifyToken(inputText, inputChar, charPosition, i);
+                charPosition = identifyToken(inputText, charPosition, i);
                 if (isDoubleOperator) {
                     isDoubleOperator =false;
                     i++;
@@ -57,16 +72,31 @@ public class Token {
         }
     }
 
-    private int stringParser(String inputText, int charPosition, int i) {
-        if (!isString && !inputText.substring(charPosition,i).equals("")) {
-            lineTokens.add(inputText.substring(charPosition, i));
-            charPosition = i;
+    /**
+     * Methods handles the strings which are spread into multiple lines.
+     * @param inputText Input code String
+     * @param charPosition - position from which string token started.
+     * @param stringEndPosition - Position at String token ended.
+     * @return - new position of counter for rest of the tokens.
+     */
+    private int stringParser(String inputText, int charPosition, int stringEndPosition) {
+        if (!isString && !inputText.substring(charPosition,stringEndPosition).equals("")) {
+            lineTokens.add(inputText.substring(charPosition, stringEndPosition));
+            charPosition = stringEndPosition;
         }
         isString = !isString;
         return charPosition;
     }
 
-    private int identifyToken(String inputText, char[] inputChar, int charPosition, int i) {
+    /**
+     * Separates the given code into tokens which dio not have spaces using operators and handles multiple characters operators such as '>='
+     * @param inputText - Input code block.
+     * @param charPosition - pointer position where given token started.
+     * @param i - counter for the input string.
+     * @return - new position of the counter where tokens needs to be identified further.
+     */
+    private int identifyToken(String inputText, int charPosition, int i) {
+        char[] inputChar = inputText.toCharArray();
         if (OPERATOR_DELIMITER_LIST.contains(inputChar[i]) && !inputText.substring(charPosition,i).equals(" ")) {
             if (!inputText.substring(charPosition,i).equals("")) {
                 lineTokens.add(inputText.substring(charPosition,i));
@@ -77,7 +107,6 @@ public class Token {
                     lineTokens.add(inputText.substring(i,i+2));
                 }
             }
-            System.out.println("doubleOpe - "+isDoubleOperator);
             if (inputText.charAt(i) != '\n' && !isDoubleOperator) {
                 lineTokens.add(inputText.substring(i,i+1));
             }
