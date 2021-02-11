@@ -8,6 +8,7 @@ public class Token {
     private boolean isString = false;
     private boolean addString = false;
     static final List<Character> OPERATOR_DELIMITER_LIST = Arrays.asList('=','(',')','{','}',';','+','-','*','/','%');
+    boolean isDoubleOperator = false;
 
     public ArrayList<TokenDetails> getToken(String inputText) {
         String[] lines = inputText.split("\\n");
@@ -44,6 +45,11 @@ public class Token {
             }
             if (!isString) {
                 charPosition = identifyToken(inputText, inputChar, charPosition, i);
+                if (isDoubleOperator) {
+                    isDoubleOperator =false;
+                    i++;
+                    charPosition++;
+                }
             }
         }
         if (!inputText.substring(charPosition).equals("") && !inputText.substring(charPosition).equals(" ")) {
@@ -65,7 +71,14 @@ public class Token {
             if (!inputText.substring(charPosition,i).equals("")) {
                 lineTokens.add(inputText.substring(charPosition,i));
             }
-            if (inputText.charAt(i) != '\n') {
+            if ((inputChar[i] == '>' || inputChar[i] == '<' || inputChar[i] == '=') && (i+1 < inputChar.length)) {
+                if (inputChar[i+1] == '=') {
+                    isDoubleOperator = true;
+                    lineTokens.add(inputText.substring(i,i+2));
+                }
+            }
+            System.out.println("doubleOpe - "+isDoubleOperator);
+            if (inputText.charAt(i) != '\n' && !isDoubleOperator) {
                 lineTokens.add(inputText.substring(i,i+1));
             }
             charPosition = i+1;
